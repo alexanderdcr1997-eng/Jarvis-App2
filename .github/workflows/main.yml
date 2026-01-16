@@ -1,19 +1,36 @@
-name: Build Android APK
-on: [push]
+name: Build APK Manual
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
+      # 1. Instalar dependencias de Linux (Igual que en Colab)
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autoconf automake \
+          python3-pip python3-dev git zip unzip openjdk-17-jdk \
+          ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+          libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev
 
+      # 2. Instalar Buildozer
+      - name: Install Buildozer
+        run: |
+          pip3 install --upgrade pip
+          pip3 install --upgrade buildozer cython==0.29.33
+
+      # 3. Construir el APK (El comando 'yes' acepta las licencias automáticamente)
+      - name: Build APK
+        run: yes | buildozer android debug
+
+      # 4. Subir el resultado para que lo puedas descargar
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
