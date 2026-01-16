@@ -1,4 +1,4 @@
-name: Build JARVIS Fixed
+name: Build Fixed
 on:
   push:
     branches: [ main, master ]
@@ -7,11 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build with Buildozer (Fixed Action)
-        # Usamos la versión corregida por HeaTTheatR que soluciona el error 'chown user'
+      - name: Build APK
+        # Esta es la accion corregida que no pide usuario 'user'
         uses: HeaTTheatR/buildozer-action@v1
         id: buildozer
         with:
